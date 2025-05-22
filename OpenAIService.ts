@@ -1,11 +1,16 @@
-import OpenAI from "openai";
+import OpenAI, { toFile } from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import Groq from "groq-sdk";
 
 export class OpenAIService {
   private openai: OpenAI;
+  private groq: Groq;
 
   constructor() {
     this.openai = new OpenAI();
+    this.groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY
+    });
   }
 
   async completion(
@@ -31,5 +36,26 @@ export class OpenAIService {
       console.error("Error in OpenAI completion:", error);
       throw error;
     }
+  }
+
+  async transcribe(audioBuffer: Buffer): Promise<string> {
+    console.log("Transcribing audio...");
+
+    const transcription = await this.openai.audio.transcriptions.create({
+      file: await toFile(audioBuffer, 'speech.mp3'),
+      language: 'pl',
+      model: 'whisper-1',
+    });
+    return transcription.text;
+  }
+
+  async transcribeGroq(audioBuffer: Buffer): Promise<string> {
+    console.log("Transcribing audio...");
+    const transcription = await this.groq.audio.transcriptions.create({
+      file: await toFile(audioBuffer, 'speech.mp3'),
+      language: 'pl',
+      model: 'whisper-large-v3',
+    });
+    return transcription.text;
   }
 }

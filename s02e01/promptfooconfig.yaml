@@ -1,0 +1,30 @@
+description: "Testing street name extraction from university faculty information"
+
+prompts:
+  - "Given the faculty information, what is the street name where it is located? Answer with just the street name.\nContext: {{context}}"
+  - "Extract only the street name from the following faculty information. Do not include any other information.\nContext: {{context}}"
+  - "What street is the faculty located on? Provide just the street name.\nContext: {{context}}"
+
+providers:
+  - "openai:gpt-4o-mini"
+  - "openai:gpt-4o"
+  - "openai:gpt-4.1-mini"
+  - "openai:gpt-4.1-nano"
+  - "openai:gpt-4.1"
+
+tests:
+  - vars:
+      context: |
+        {
+          "answer": "Andrzej Maj is teaching at a university in Kraków, specifically at the Faculty or Institute of Informatics and Computer Mathematics (exact name unclear).",
+          "_thinking": "From the transcript, multiple people mention Andrzej Maj's work and teaching history. It is stated he worked after his studies, did a PhD in neural networks and machine learning, then moved to another university, had a short episode working in Warsaw, but eventually ended up teaching in Kraków. The key piece of information is: 'Andrzej pracował z sieciami neuronowymi, to prawda. Był wykładowcą w Krakowie, to także prawda. Z tego co wiem, jeszcze przynajmniej pół roku temu tam pracował. Wydział czy tam Instytut Informatyki i Matematyki Komputerowej.' While the exact formal name of the faculty is uncertain, it is associated with informatics and computer mathematics in Kraków. Other statements confirm he left Warsaw and went to Kraków to lecture, which corroborates the location and field. No other university is mentioned as his final teaching place apart from Kraków."
+        }
+    assert:
+      - type: contains
+        value: "Łojasiewicza"
+      # - type: llm-rubric
+      #   value: |
+      #     Score the output based on the following criteria:
+      #     1. Output contains only the street name "Łojsiewicza"
+      #     2. No additional information or context is included
+      #     3. Correct spelling of "Łojsiewicza" 

@@ -3,12 +3,11 @@ import type { ChatCompletionMessageParam, ChatCompletion } from "openai/resource
 export const OLLAMA_API_URL = "http://localhost:11434/v1/chat/completions";
 export const OLLAMA_MODEL = "gemma3:4b";
 
-// Define the OllamaService class
 export class OllamaService {
     private apiUrl: string;
     private model: string;
 
-    constructor(apiUrl: string, model: string) {
+    constructor(apiUrl = OLLAMA_API_URL, model = OLLAMA_MODEL) {
         this.apiUrl = apiUrl;
         this.model = model;
     }
