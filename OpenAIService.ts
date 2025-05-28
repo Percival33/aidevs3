@@ -79,6 +79,7 @@ export class OpenAIService {
         size,
         quality,
         style,
+        response_format: "url"
       });
 
       if (!response.data || response.data.length === 0) {
