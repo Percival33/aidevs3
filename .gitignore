@@ -1,3 +1,6 @@
 .env
 node_modules
 *.m4a
+s02e04/processed
+s02e04/summary.json
+pliki_z_fabryki
