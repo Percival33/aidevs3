@@ -53,11 +53,11 @@ export class OpenAIService {
     return transcription.text;
   }
 
-  async transcribeGroq(audioBuffer: Buffer): Promise<string> {
+  async transcribeGroq(audioBuffer: Buffer, language: string = 'pl'): Promise<string> {
     console.log("Transcribing audio...");
     const transcription = await this.groq.audio.transcriptions.create({
       file: await toFile(audioBuffer, 'speech.mp3'),
-      language: 'pl',
+      language,
       model: 'whisper-large-v3',
     });
     return transcription.text;
@@ -95,6 +95,38 @@ export class OpenAIService {
       return imageUrl;
     } catch (error) {
       console.error("Error generating image:", error);
+      throw error;
+    }
+  }
+
+  async vision(imageBuffer: Buffer, prompt: string = "Extract all text from this image"): Promise<string> {
+    try {
+      console.log("Extracting text from image using GPT-4 Vision...");
+      
+      const base64Image = imageBuffer.toString('base64');
+      
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/png;base64,${base64Image}`,
+                },
+              },
+            ],
+          },
+        ],
+        max_tokens: 2000,
+      });
+
+      return response.choices[0]?.message?.content || "";
+    } catch (error) {
+      console.error("Error in vision processing:", error);
       throw error;
     }
   }
