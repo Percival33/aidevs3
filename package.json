@@ -10,8 +10,13 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@qdrant/js-client-rest": "^1.14.1",
+    "@types/jsdom": "^21.1.7",
+    "@types/turndown": "^5.0.5",
     "groq-sdk": "^0.22.0",
+    "jsdom": "^26.1.0",
     "openai": "^4.98.0",
-    "promptfoo": "^0.113.1"
+    "promptfoo": "^0.113.1",
+    "turndown": "^7.2.0"
   }
 }

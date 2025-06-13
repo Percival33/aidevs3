@@ -5,6 +5,8 @@ import Groq from "groq-sdk";
 export class OpenAIService {
   private openai: OpenAI;
   private groq: Groq;
+  private readonly JINA_API_KEY = process.env.JINA_API_KEY;
+
 
   constructor() {
     this.openai = new OpenAI();
@@ -15,7 +17,7 @@ export class OpenAIService {
 
   async completion(
     messages: ChatCompletionMessageParam[],
-    model: string = "gpt-4",
+    model: string = "gpt-4.1-mini",
     stream: boolean = false,
     jsonMode: boolean = false,
     maxTokens: number = 1024,
@@ -106,7 +108,7 @@ export class OpenAIService {
       const base64Image = imageBuffer.toString('base64');
       
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4.1-mini",
         messages: [
           {
             role: "user",
@@ -127,6 +129,36 @@ export class OpenAIService {
       return response.choices[0]?.message?.content || "";
     } catch (error) {
       console.error("Error in vision processing:", error);
+      throw error;
+    }
+  }
+
+  async createJinaEmbedding(text: string): Promise<number[]> {
+    try {
+      const response = await fetch('https://api.jina.ai/v1/embeddings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.JINA_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'jina-embeddings-v3',
+          task: 'text-matching',
+          dimensions: 1024,
+          late_chunking: false,
+          embedding_type: 'float',
+          input: [text]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.data[0].embedding;
+    } catch (error) {
+      console.error("Error creating Jina embedding:", error);
       throw error;
     }
   }
