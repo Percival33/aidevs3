@@ -315,12 +315,10 @@ Provide a comprehensive description for each person, emphasizing unique identify
         }));
 
         this.logger.info(`Photo analysis completed for attempt ${iteration + 1}, processing Barbara identification`);
-        const span = this.langfuse.createSpan(this.trace!, `findPersonAndCreateDescription-${iteration}`, { photos, url, descriptions, hints });
-
-        try {
-          const response = await this.openai.completion([
-            {
-              role: 'system', content: `
+        const span = this.langfuse.createSpan(this.trace!, `createDescription-${iteration}`, { photos, url, descriptions, hints });
+        const messages = [
+          {
+            role: 'system', content: `
 <main_objective>
 You are an expert in person identification. Analyze the provided photo descriptions to identify Barbara - a woman who likely appears in multiple photos. Use distinctive features and cross-reference details to make an accurate identification.
 </main_objective>
@@ -328,10 +326,10 @@ You are an expert in person identification. Analyze the provided photo descripti
 <identification_strategy>
 1. **Cross-Reference Analysis:** Look for a woman described in multiple photos with consistent distinctive features
 2. **Distinctive Feature Matching:** Focus on unique physical characteristics that remain consistent across descriptions:
-   - Facial structure and features (eyes, nose, mouth, face shape)
-   - Hair characteristics (color, style, length)
-   - Body type and height indicators
-   - Unique marks (scars, birthmarks, accessories)
+ - Facial structure and features (eyes, nose, mouth, face shape)
+ - Hair characteristics (color, style, length)
+ - Body type and height indicators
+ - Unique marks (scars, birthmarks, accessories)
 3. **Consistency Check:** Verify that clothing may vary but core physical features remain consistent
 4. **Elimination Process:** Rule out descriptions that don't match established Barbara characteristics
 </identification_strategy>
@@ -364,8 +362,10 @@ Return ONLY a detailed description of Barbara focusing on her distinctive physic
 
 If you cannot confidently identify Barbara from the descriptions, return exactly: "Barbara not found"
 </output_requirements>
-              ` },
-          ], 'gpt-4.1-mini', false, false, 2048, 1) as ChatCompletion;
+            ` },
+        ] as ChatCompletionMessageParam[];
+        try {
+          const response = await this.openai.completion(messages, 'gpt-4.1-mini', false, false, 2048, 1) as ChatCompletion;
 
           const candidateDescription = response.choices[0]?.message.content || '';
           this.logger.info(`Generated description candidate: ${candidateDescription.substring(0, 100)}...`);
@@ -376,7 +376,7 @@ If you cannot confidently identify Barbara from the descriptions, return exactly
           this.logger.info(`Service response code: ${serviceResponse.code}, message: ${serviceResponse.message?.substring(0, 100) || 'N/A'}...`);
 
           if (span) {
-            await this.langfuse.finalizeSpan(span, `findPersonAndCreateDescription-${iteration}`, [{ role: 'user', content: descriptions.join('\n') }], JSON.stringify(serviceResponse));
+            await this.langfuse.finalizeSpan(span, `createDescription-${iteration}`, messages, response);
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
 

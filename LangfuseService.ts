@@ -28,11 +28,22 @@ export class LangfuseService {
     return trace.span({ name, input: input ? JSON.stringify(input) : undefined });
   }
 
-  finalizeSpan(span: LangfuseSpanClient, name: string, input: ChatCompletionMessageParam[], output: ChatCompletion): void {
+  async finalizeSpan(span: LangfuseSpanClient, name: string, input: ChatCompletionMessageParam[] | string, output: ChatCompletion | string): Promise<void> {
+    if (typeof output === 'string') {
+      span.update({
+        name,
+        output: output,
+      });
+      span.end();
+      await this.langfuse.flushAsync();
+      return;
+    }
+
     span.update({
       name,
       output: JSON.stringify(output.choices[0]?.message),
     });
+
 
     const generation: LangfuseGenerationClient = span.generation({
       name,
@@ -50,16 +61,23 @@ export class LangfuseService {
     });
     generation.end();
     span.end();
+    await this.langfuse.flushAsync();
   }
-
-  async finalizeTrace(trace: LangfuseTraceClient, originalMessages: ChatCompletionMessageParam[], generatedMessages: ChatCompletionMessageParam[]): Promise<void> {
-    const inputMessages = originalMessages.filter(msg => msg.role !== 'system');
-    await trace.update({ 
-      input: JSON.stringify(inputMessages),
-      output: JSON.stringify(generatedMessages),
+  async finalizeTrace(trace: LangfuseTraceClient, input: any, output: any): Promise<void> {
+    await trace.update({
+      input,
+      output,
     });
     await this.langfuse.flushAsync();
   }
+  // async finalizeTrace(trace: LangfuseTraceClient, originalMessages: ChatCompletionMessageParam[], generatedMessages: ChatCompletionMessageParam[]): Promise<void> {
+  //   const inputMessages = originalMessages.filter(msg => msg.role !== 'system');
+  //   await trace.update({ 
+  //     input: JSON.stringify(inputMessages),
+  //     output: JSON.stringify(generatedMessages),
+  //   });
+  //   await this.langfuse.flushAsync();
+  // }
 
   async shutdownAsync(): Promise<void> {
     await this.langfuse.shutdownAsync();

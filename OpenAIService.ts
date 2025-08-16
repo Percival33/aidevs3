@@ -15,6 +15,8 @@ export class OpenAIService {
     });
   }
 
+  // async response
+
   async completion(
     messages: ChatCompletionMessageParam[],
     model: string = "gpt-4.1-mini",
@@ -28,7 +30,7 @@ export class OpenAIService {
         messages,
         model,
         stream,
-        max_tokens: maxTokens,
+        max_completion_tokens: maxTokens,
         temperature,
         response_format: jsonMode ? { type: "json_object" } : { type: "text" }
       });
@@ -103,8 +105,6 @@ export class OpenAIService {
 
   async vision(imageBuffer: Buffer, prompt: string = "Extract all text from this image"): Promise<string> {
     try {
-      console.log("Extracting text from image using GPT-4 Vision...");
-      
       const base64Image = imageBuffer.toString('base64');
       
       const response = await this.openai.chat.completions.create({
@@ -124,6 +124,33 @@ export class OpenAIService {
           },
         ],
         max_tokens: 2000,
+      });
+
+      return response.choices[0]?.message?.content || "";
+    } catch (error) {
+      console.error("Error in vision processing:", error);
+      throw error;
+    }
+  }
+
+  async visionUrl(image_url: string, prompt: string = "Extract all text from this image"): Promise<string> {
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4.1-mini",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              {
+                type: "image_url",
+                image_url: {
+                  url: image_url,
+                },
+              },
+            ],
+          },
+        ],
       });
 
       return response.choices[0]?.message?.content || "";
