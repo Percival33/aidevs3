@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@logdash/js-sdk": "^1.0.9",
     "@qdrant/js-client-rest": "^1.14.1",
     "@types/jsdom": "^21.1.7",
     "@types/turndown": "^5.0.5",

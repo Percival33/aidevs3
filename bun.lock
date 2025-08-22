@@ -4,6 +4,7 @@
     "": {
       "name": "aidevs3",
       "dependencies": {
+        "@logdash/js-sdk": "^1.0.9",
         "@qdrant/js-client-rest": "^1.14.1",
         "@types/jsdom": "^21.1.7",
         "@types/turndown": "^5.0.5",
@@ -290,6 +291,8 @@
     "@jsdevtools/ono": ["@jsdevtools/ono@7.1.3", "https://box.jfrog.io/box/api/npm/boxnpm/@jsdevtools/ono/-/ono-7.1.3.tgz", {}, "sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg=="],
 
     "@langchain/core": ["@langchain/core@0.3.56", "https://box.jfrog.io/box/api/npm/boxnpm/@langchain/core/-/core-0.3.56.tgz", { "dependencies": { "@cfworker/json-schema": "^4.0.2", "ansi-styles": "^5.0.0", "camelcase": "6", "decamelize": "1.2.0", "js-tiktoken": "^1.0.12", "langsmith": "^0.3.29", "mustache": "^4.2.0", "p-queue": "^6.6.2", "p-retry": "4", "uuid": "^10.0.0", "zod": "^3.22.4", "zod-to-json-schema": "^3.22.3" } }, "sha512-eF9MyInM9RLNisAygiCrzHnqzOnuzGWy4f1SAqAis+XIMhcA98WuZDNWxyX9pP3aKQGc47FAJ/9XWJwv5KiquA=="],
+
+    "@logdash/js-sdk": ["@logdash/js-sdk@1.0.9", "https://box.jfrog.io/box/api/npm/boxnpm/@logdash/js-sdk/-/js-sdk-1.0.9.tgz", { "dependencies": { "chalk": "^4.1.2" } }, "sha512-l+omnzjlxvOwOGufVQW2+9exGBuzrFE/3mPEuV6BmCF58GWe7RaE6AERrumijEdHJ5YwmDh49YPE7I3LfXKmPg=="],
 
     "@mixmark-io/domino": ["@mixmark-io/domino@2.2.0", "https://box.jfrog.io/box/api/npm/boxnpm/@mixmark-io/domino/-/domino-2.2.0.tgz", {}, "sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw=="],
 
