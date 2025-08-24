@@ -1,0 +1,14 @@
+{
+  "name": "s04e04",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts"
+  },
+  "dependencies": {
+    "@logdash/js-sdk": "^1.0.9",
+    "hono": "^4.9.4",
+    "openai": "^4.98.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
